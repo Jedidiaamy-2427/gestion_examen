@@ -36,6 +36,10 @@ class RegisterInput
     #[Assert\NotBlank]
     #[Assert\Length(min: 6)]
     public string $password = '';
+
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
+    public string $username;
 }
 
 

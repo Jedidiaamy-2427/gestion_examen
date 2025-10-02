@@ -26,10 +26,12 @@ class RegisterController extends AbstractController
         $data = $request->attributes->get('data');
         if ($data instanceof RegisterInput) {
             $email = trim($data->email);
+            $username = $data->username;
             $plainPassword = $data->password;
         } else {
             $payload = json_decode($request->getContent() ?: '{}', true);
             $email = is_string(($payload['email'] ?? null)) ? trim($payload['email']) : '';
+            $username = is_string(($payload['username'] ?? null)) ? trim($payload['username']) : '';
             $plainPassword = (string) ($payload['password'] ?? '');
         }
 
@@ -38,14 +40,23 @@ class RegisterController extends AbstractController
             new Assert\Email(),
             new Assert\Length(max: 180),
         ]);
+
+        $usernameViolations = $validator->validate($username, [
+            new Assert\NotBlank(),
+            new Assert\Length(max: 255),
+        ]);
+
         $passwordViolations = $validator->validate($plainPassword, [
             new Assert\NotBlank(),
             new Assert\Length(min: 6),
         ]);
 
-        if (\count($violations) > 0 || \count($passwordViolations) > 0) {
+        if (\count($violations) > 0 || \count($passwordViolations) > 0 || \count($usernameViolations) > 0){
             $errors = [];
             foreach ($violations as $violation) {
+                $errors[] = $violation->getMessage();
+            }
+            foreach ($usernameViolations as $violation) {
                 $errors[] = $violation->getMessage();
             }
             foreach ($passwordViolations as $violation) {
@@ -61,6 +72,7 @@ class RegisterController extends AbstractController
 
         $user = new User();
         $user->setEmail($email);
+        $user->setUsername($username);
         $hashed = $passwordHasher->hashPassword($user, $plainPassword);
         $user->setPassword($hashed);
         $user->setRoles(['ROLE_USER']);
@@ -70,6 +82,7 @@ class RegisterController extends AbstractController
 
         return $this->json([
             'id' => $user->getId(),
+            'username' => $user->getUsername(),
             'email' => $user->getEmail(),
         ], Response::HTTP_CREATED);
     }
