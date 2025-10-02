@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: exam_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      APP_ENV: dev
+      APP_SECRET: 7b8120945eda310e6eb13fd78c1fc780
+      DATABASE_URL: "pgsql://postgres:postgres@db:5432/exam_db"
+      JWT_PASSPHRASE: 83731810efdd20b156746f41e410b80beb205191edf113e5fbb6ed32e87c565c
+      JWT_SECRET_KEY: /var/www/config/jwt/private.pem
+      JWT_PUBLIC_KEY: /var/www/config/jwt/public.pem
+      CORS_ALLOW_ORIGIN: '^http://localhost:4200$'
+      LOAD_FIXTURES: 1
+    volumes:
+      - ./backend:/var/www
+      - jwt_keys:/var/www/config/jwt  
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "
+        if [ ! -f config/jwt/private.pem ] || [ ! -f config/jwt/public.pem ]; then \
+          mkdir -p config/jwt && \
+          openssl genrsa -out config/jwt/private.pem -aes256 -passout pass:$JWT_PASSPHRASE 4096 && \
+          openssl rsa -pubout -in config/jwt/private.pem -passin pass:$JWT_PASSPHRASE -out config/jwt/public.pem; \
+        fi && \
+        php bin/console doctrine:database:create --if-not-exists && \
+        php bin/console doctrine:migrations:migrate --no-interaction && \
+        php bin/console doctrine:fixtures:load -n --append && \
+        php -S 0.0.0.0:8000 -t public
+      "
+volumes:
+  pgdata:
+  jwt_keys:
