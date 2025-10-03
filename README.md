@@ -72,3 +72,22 @@ La documentation de l'API est générée automatiquement et disponible via API P
 http://localhost:8000/api/docs
 ```
 
+## Aperçu de l'application
+
+1. Voici un aperçu de l'interface Login de l'App :
+
+![Login Page](public/capture/login.png)
+
+Le projet possède une interface d'authentification 
+
+
+2. Voici un aperçu de la dashboard:
+
+![Dashboard](public/capture/dashboard.png)
+Le projet possède une sidebar dynamique, un navbar moderne et des badges pour les tâches en retard.
+
+
+
+2. Voici un aperçu de l’interface de la liste des examens :
+
+![Examen](public/capture/exam_list.png)
