@@ -78,13 +78,10 @@ http://localhost:8000/api/docs
 
 ![Login Page](public/capture/login.png)
 
-Le projet possède une interface d'authentification 
-
 
 2. Voici un aperçu de la dashboard:
 
 ![Dashboard](public/capture/dashboard.png)
-Le projet possède une sidebar dynamique, un navbar moderne et des badges pour les tâches en retard.
 
 
 
