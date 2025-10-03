@@ -1,1 +1,84 @@
-<p>exam works!</p>
+<div class="p-6 bg-white shadow rounded-lg">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
+    <h2 class="text-xl font-bold">Mes examens</h2>
+    <button class="mt-4 sm:mt-0 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow">
+      Organiser un examen
+    </button>
+  </div>
+
+  <!-- Info -->
+  <p class="text-gray-500 mb-4">{{ ExamService.exams().length}} examens à venir</p>
+
+  <!-- Table responsive -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full border-collapse">
+      <thead>
+        <tr class="bg-gray-50 text-gray-600 text-sm text-left">
+          <th class="p-3 font-medium">Étudiant</th>
+          <th class="p-3 font-medium">Lieu</th>
+          <th class="p-3 font-medium">Date</th>
+          <th class="p-3 font-medium">Heure</th>
+          <th class="p-3 font-medium">Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let exam of ExamService.exams()" class="rounded-2xl hover:bg-gray-50">
+          <!-- Étudiant -->
+          <td class="p-3 text-gray-800">
+            <div class="flex items-center gap-2">
+              <img src="/assets/icon/user.svg" alt="User" class="h-4 w-4 text-gray-500" />
+              <span>{{ exam.student }}</span>
+            </div>
+          </td>
+
+          <!-- Lieu -->
+          <td class="p-3 text-gray-600">
+            <div class="flex items-center gap-2">
+              <img src="/assets/icon/location.svg" alt="Lieu" class="h-4 w-4" />
+              <span>{{ exam.location || 'En attente' }}</span>
+            </div>
+          </td>
+
+          <!-- Date -->
+          <td class="p-3 text-gray-600">
+            <div class="flex items-center gap-2">
+              <img src="/assets/icon/calendar.svg" alt="Date" class="h-4 w-4" />
+              <span>{{ exam.date ? (exam.date | date:'dd MMM') : 'En attente' }}</span>
+            </div>
+          </td>
+
+          <!-- Heure -->
+          <td class="p-3 text-gray-600">
+            <div class="flex items-center gap-2">
+              <img src="/assets/icon/clock.svg" alt="Heure" class="h-4 w-4" />
+              <span>{{ exam.time ? (exam.time | date:'HH:mm') : 'En attente' }}</span>
+            </div>
+          </td>
+
+          <!-- Statut -->
+          <td class="p-3 flex justify-between">
+            <div
+              [ngClass]="{
+                'bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs inline-flex items-center gap-1': exam.status === 'Confirmé',
+                'bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm inline-flex items-center gap-1': exam.status === 'À organiser',
+                'bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm inline-flex items-center gap-1': exam.status === 'Annulé',
+                'bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm inline-flex items-center gap-1': exam.status === 'En recherche de place'
+              }"
+
+              class="flex items-center gap-2 p-2 rounded-2xl"
+            >
+              <img *ngIf="exam.status === 'Confirmé'" src="/assets/icon/check.svg" alt="" class="h-4 w-4" />
+              <img *ngIf="exam.status === 'À organiser'" src="/assets/icon/checklist2.svg" alt="" class="h-4 w-4" />
+              <img *ngIf="exam.status === 'Annulé'" src="/assets/icon/Cancel Icon.svg" alt="" class="h-4 w-4" />
+              <img *ngIf="exam.status === 'En recherche de place'" src="/assets/icon/Temps.svg" alt="" class="h-4 w-4" />
+              <span class="flex">{{ exam.status }}</span>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
