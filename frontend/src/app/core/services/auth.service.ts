@@ -27,8 +27,8 @@ export class AuthService {
     if (refresh) this._refresh.set(refresh);
   }
 
-    login(username: string, password: string) {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { username, password })
+    login(email: string, password: string) {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password })
       .pipe(tap(res => {
         this._token.set(res.token);
         this._refresh.set(res.refresh_token);
@@ -36,5 +36,40 @@ export class AuthService {
         localStorage.setItem('refresh_token', res.refresh_token);
         this.user.set({ username: res.username, email: res.email, token: res.token, refreshToken: res.refresh_token });
       }));
+    }
+
+  logout() {
+    this.http.post(`${this.apiUrl}/logout`, { refresh_token: this._refresh() }).subscribe({
+      next: () => {
+        this.user.set(null);
+        this._token.set(null);
+        this._refresh.set(null);
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('refresh_token');
+      }, 
+      error: (err) => {
+        console.error('Error logging out:', err);
+      }     
+    });
   }
-}
+
+  get token() { 
+    return this._token();
+  }
+
+  get refreshToken() {
+    return this._refresh();
+  }
+
+  refresh() {
+    const rt = this._refresh();
+    if (!rt) return this.http.post<AuthResponse>(`${this.apiUrl}/token/refresh`, { refreshToken: '' });
+    return this.http.post<AuthResponse>(`${this.apiUrl}/token/refresh`, { refreshToken: rt })
+      .pipe(tap(res => {
+        // this._token.set(res.token);
+        // this._refresh.set(res.refreshToken);
+        // localStorage.setItem('auth_token', res.token);
+        // localStorage.setItem('refresh_token', res.refreshToken);
+      }));
+  }
+} 

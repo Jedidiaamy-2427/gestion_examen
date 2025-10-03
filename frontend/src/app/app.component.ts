@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -12,9 +13,11 @@ import { Router, RouterOutlet } from '@angular/router';
 export class AppComponent {
   title = signal('frontend');
   router = inject(Router);
+  auth =  inject(AuthService)
 
 
   logout() {
+    this.auth.logout();
     this.router.navigate(['/login']);
   }
 }
