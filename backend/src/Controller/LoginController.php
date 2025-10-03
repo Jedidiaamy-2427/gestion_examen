@@ -33,7 +33,7 @@ class LoginController extends AbstractController
 
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
         if ($user === null || !$passwordHasher->isPasswordValid($user, $plainPassword)) {
-            return $this->json(['error' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
+            return $this->json(['error' => 'Invalid credentials'], Response::HTTP_NOT_FOUND);
         }
 
         $tokens = $this->tokenService->createTokens($user);
@@ -56,12 +56,12 @@ class LoginController extends AbstractController
         $refreshToken = $payload['refresh_token'] ?? null;
 
         if (!$refreshToken) {
-            return $this->json(['error' => 'Refresh token is required'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['error' => 'Refresh token is required', 'status' => Response::HTTP_BAD_REQUEST], Response::HTTP_BAD_REQUEST);
         }
 
         $token = $refreshTokenManager->get($refreshToken);
         if (!$token) {
-            return $this->json(['error' => 'Invalid refresh token'], Response::HTTP_UNAUTHORIZED);
+            return $this->json(['error' => 'Invalid refresh token', 'status' => Response::HTTP_NOT_FOUND], Response::HTTP_NOT_FOUND);
         }
 
         // Supprime le refresh token (invalidation)

@@ -8,7 +8,7 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const token = localStorage.getItem('auth_token');
 
-  if (req.url.includes('/api/refresh_token')) {
+  if (req.url.includes('/api/refresh_token') || req.url.includes('/api/logout')) {
     return next(req);
   }
 
@@ -29,11 +29,6 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
               ? req.clone({ setHeaders: { Authorization: `Bearer ${newToken}` } })
               : req;
             return next(retried);
-          }),
-          catchError(refreshErr => {
-            // ⚡ Si le refresh échoue aussi, déconnecter l’utilisateur
-            auth.logout();
-            return throwError(() => refreshErr);
           })
         );
       }
