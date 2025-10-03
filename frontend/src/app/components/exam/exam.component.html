@@ -91,6 +91,9 @@
               </div>
           </td>
         </tr>
+        <tr *ngIf="ExamService.exams().length === 0">
+            <td colspan="6" class="text-center py-4 text-gray-500">Aucune tâche disponible.</td>
+        </tr>
 
       </tbody>
     </table>
