@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\User;
 use App\Service\TokenService;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 
 class LoginController extends AbstractController
 {   
@@ -41,12 +42,36 @@ class LoginController extends AbstractController
 
         return $this->json([
             'username' => $user->getUsername(),
-            'id' => $user->getId(),
             'email' => $user->getEmail(),
             'token' => $token,
             'refresh_token' => $refreshToken
         ], Response::HTTP_OK);
     }
+
+
+    #[Route('/api/logout', name: 'api_logout', methods: ['POST'])]
+    public function logout(Request $request, RefreshTokenManagerInterface $refreshTokenManager,): JsonResponse
+    {
+        $payload = json_decode($request->getContent() ?: '{}', true);
+        $refreshToken = $payload['refresh_token'] ?? null;
+
+        if (!$refreshToken) {
+            return $this->json(['error' => 'Refresh token is required'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $token = $refreshTokenManager->get($refreshToken);
+        if (!$token) {
+            return $this->json(['error' => 'Invalid refresh token'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        // Supprime le refresh token (invalidation)
+        $refreshTokenManager->delete($token);
+
+        return $this->json([
+            'message' => 'Logout successful. Token invalidated.'
+        ], Response::HTTP_OK);
+    }
+
 }
 
 
