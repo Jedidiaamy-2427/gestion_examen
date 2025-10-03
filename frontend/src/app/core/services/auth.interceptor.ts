@@ -7,25 +7,38 @@ import { AuthService } from './auth.service';
 export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const token = localStorage.getItem('auth_token');
+
+  if (req.url.includes('/api/refresh_token')) {
+    return next(req);
+  }
+
+  let clonedReq = req;
   if (token) {
-    const cloned = req.clone({
+    clonedReq = req.clone({
       setHeaders: { Authorization: `Bearer ${token}` }
     });
-    return next(cloned).pipe(
-      catchError((err: HttpErrorResponse) => {
-        if (err.status === 401 && auth.refreshToken) {
-          // tenter un refresh puis rejouer
-          return auth.refresh().pipe(
-            switchMap(() => {
-              const newToken = auth.token;
-              const retried = newToken ? req.clone({ setHeaders: { Authorization: `Bearer ${newToken}` } }) : req;
-              return next(retried);
-            })
-          );
-        }
-        return throwError(() => err);
-      })
-    );
   }
-  return next(req);
+
+  return next(clonedReq).pipe(
+    catchError((err: HttpErrorResponse) => {
+      if (err.status === 401 && auth.refreshToken) {
+        return auth.refresh().pipe(
+          switchMap(() => {
+            const newToken = auth.token;
+            const retried = newToken
+              ? req.clone({ setHeaders: { Authorization: `Bearer ${newToken}` } })
+              : req;
+            return next(retried);
+          }),
+          catchError(refreshErr => {
+            // ⚡ Si le refresh échoue aussi, déconnecter l’utilisateur
+            auth.logout();
+            return throwError(() => refreshErr);
+          })
+        );
+      }
+      return throwError(() => err);
+    })
+  );
 };
+
