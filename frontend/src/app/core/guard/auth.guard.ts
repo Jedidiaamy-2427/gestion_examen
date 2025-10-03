@@ -9,7 +9,6 @@ export class AuthGuard implements CanActivate {
   router = inject(Router);
 
   canActivate(): boolean {
-    
     if (!localStorage.getItem('auth_token')) {
       this.router.navigate(['/login']);
       return false; 
