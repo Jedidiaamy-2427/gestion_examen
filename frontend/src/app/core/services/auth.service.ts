@@ -2,14 +2,10 @@ import { Injectable, signal } from '@angular/core';
 import { tap } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
+import { AuthResponse } from '../../shared/interfaces/auth-reponse.interface';
 
 
-export interface AuthResponse {
-  username: string;
-  email: string;
-  token: string;
-  refresh_token: string;
-}
+
 
 @Injectable({
   providedIn: 'root'

@@ -2,7 +2,8 @@ import { CommonModule } from "@angular/common";
 import { Component, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { AuthResponse, AuthService } from "../../core/services/auth.service";
+import { AuthService } from "../../core/services/auth.service";
+import { AuthResponse } from "../../shared/interfaces/auth-reponse.interface";
 
 @Component({
     selector: 'app-login',
