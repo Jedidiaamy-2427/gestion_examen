@@ -10,7 +10,7 @@ import { StudentService } from './student.service';
 })
 export class ExamService { 
     private apiUrl = `${environment.apiUrl}/exams`
-    private _exams = signal<ExamInterface[] | any[]>([])
+    _exams = signal<ExamInterface[] | any[]>([])
     exams = this._exams.asReadonly();
 
     private _exam = signal<ExamInterface | null>(null);
@@ -30,21 +30,21 @@ export class ExamService {
       tap(res => {
         const list = res.member
 
-        // Charger les étudiants avant
+    
         this.studentService.getAll().subscribe(students => {
-          // Construire un dictionnaire id -> nom
+
           const mapStudents = new Map<number, string>(
-            students.member.map((s: any) => [s.id, s.name])   // <--- adapte si ton champ est `fullName` ou `username`
+            students.member.map((s: any) => [s.id, s.name])
           );
-          // Mapper les exams avec le nom de l’étudiant
+        
           const mapped = list.map((exam: any) => {
-            const studentId = Number(exam.student.split("/").pop()); // extrait 36 de "/api/students/36"
+            const studentId = Number(exam.student.split("/").pop());
             return {
               ...exam,
               studentName: mapStudents.get(studentId) || "Inconnu"
             };
           });
-          console.log('mapped', mapped);
+
           const sorted = [...mapped].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
           );
           this._exams.set(sorted);

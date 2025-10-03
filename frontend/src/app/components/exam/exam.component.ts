@@ -61,8 +61,8 @@ export class ExamComponent {
       student: exam.student,
       studentName: exam.studentName,
       location: exam.location,
-      date: exam.date.split('T')[0],     // garder uniquement YYYY-MM-DD
-      time: exam.time.split('T')[1]?.substring(0,5) || '', // HH:mm
+      date: exam.date.split('T')[0],    
+      time: exam.time.split('T')[1]?.substring(0,5) || '', 
       status: exam.status
     });
 
@@ -76,23 +76,22 @@ export class ExamComponent {
   submitExam() {
     if (this.examForm.valid) {
       const examData = this.examForm.value;
-      console.log("📌 Nouvel examen :", examData);
 
       if (this.isEditing && this.currentExamId) {
-        // mode édition
+
         this.ExamService.updateExam(this.currentExamId, examData).subscribe({
           next: () => {
             this.closeModal();
-            this.ExamService.getAll().subscribe(); // rafraîchir
+            this.ExamService.getAll().subscribe();
           },
           error: err => console.error("Erreur mise à jour examen", err)
         });
       } else {
-        // mode Création
+ 
         this.ExamService.addExam(examData).subscribe({
           next: () => {
             this.closeModal();
-            this.ExamService.getAll().subscribe(); // rafraîchir la liste
+            this.ExamService.getAll().subscribe(); 
           },
           error: err => console.error("Erreur création examen", err)
         });

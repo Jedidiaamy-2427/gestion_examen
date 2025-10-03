@@ -15,9 +15,11 @@
     <header *ngIf="auth._token()" class="bg-white shadow flex justify-between items-center px-6 py-4">
       <h2 class="text-xl font-semibold">Bienvenue</h2>
       <div class="flex items-center gap-4">
-        <span> Jedidia </span>
-        <button (click)="logout()" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-          Logout
+        <img src="/assets/icon/user2.svg" alt="Logout" class="h-5 w-5" />
+        <span> {{ getUsernameToken() }} </span>
+        <button (click)="logout()" class="flex items-center bg-gray-500 text-white px-3 py-1 rounded cursor-pointer hover:bg-gray-700">
+          Logout &nbsp;
+          <img src="/assets/icon/logout.svg" alt="Logout" class="h-5 w-5" />
         </button>
       </div>
     </header>

@@ -28,21 +28,22 @@ export class DashboardComponent {
   constructor(private examService: ExamService, private router: Router)
   {}
 
-  ngOnInit() {
+    ngOnInit() {
       this.examService.getAll().subscribe({
-        next: () => {
-          const list = this.examService.exams()
+        next: async (dataExam) => {
+          const list =  dataExam.member
+
           this.computeStats(list)
         },
         error: (err) =>  {
           console.log('ERROR', err)
         }
       })
+      
   }
 
   private computeStats(exams: ExamInterface[]): void {
     this.stats = { confirmed: 0, toOrganize: 0, cancelled: 0, searching: 0 };
-
     exams.forEach((exam) => {
       switch (exam.status) {
         case 'Confirmé':
