@@ -70,7 +70,7 @@ class TokenService
 
         return [
             'access_token' => $accessToken,
-            'refresh_token' => $refreshTokenString, // ou générer un nouveau si tu veux rotation
+            'refresh_token' => $refreshTokenString
         ];
     }
 }

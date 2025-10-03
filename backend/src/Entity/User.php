@@ -21,6 +21,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email]
     private string $email = '';
 
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank] 
+    private string $username;
+
     /**
      * @var array<int, string>
      */
@@ -43,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUsername(): string
     {
-        return $this->email;
+        return $this->username;
     }
 
     public function getEmail(): string
@@ -54,6 +58,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+        return $this;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
         return $this;
     }
 

@@ -40,8 +40,11 @@ class LoginController extends AbstractController
         $refreshToken = $tokens['refresh_token'];
 
         return $this->json([
+            'username' => $user->getUsername(),
+            'id' => $user->getId(),
+            'email' => $user->getEmail(),
             'token' => $token,
-            'refresh_token' => $refreshToken->getRefreshToken(),
+            'refresh_token' => $refreshToken
         ], Response::HTTP_OK);
     }
 }
