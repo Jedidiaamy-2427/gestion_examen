@@ -83,8 +83,6 @@ http://localhost:8000/api/docs
 
 ![Dashboard](public/capture/dashboard.png)
 
-
-
 2. Voici un aperçu de l’interface de la liste des examens :
 
 ![Examen](public/capture/exam_list.png)
