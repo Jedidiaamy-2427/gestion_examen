@@ -38,6 +38,13 @@ export class AuthService {
       }));
     }
 
+    register(username: string, email: string, password: string) {
+      return this.http.post<AuthResponse>(`${this.apiUrl}/register`, { username, email, password })
+          .pipe(tap(res => {
+            this.user.set({ username: res.username, email: res.email, token: res.token, refreshToken: res.refresh_token });
+          }));
+    }
+
   logout() {
     this.http.post(`${this.apiUrl}/logout`, { refresh_token: this._refresh() }).subscribe({
       next: () => {
@@ -63,13 +70,13 @@ export class AuthService {
 
   refresh() {
     const rt = this._refresh();
-    if (!rt) return this.http.post<AuthResponse>(`${this.apiUrl}/token/refresh`, { refreshToken: '' });
-    return this.http.post<AuthResponse>(`${this.apiUrl}/token/refresh`, { refreshToken: rt })
+    if (!rt) return this.http.post<AuthResponse>(`${this.apiUrl}/refresh_token`, { refresh_token: '' });
+    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh_token`, { refresh_token: rt })
       .pipe(tap(res => {
-        // this._token.set(res.token);
-        // this._refresh.set(res.refreshToken);
-        // localStorage.setItem('auth_token', res.token);
-        // localStorage.setItem('refresh_token', res.refreshToken);
+        this._token.set(res.token);
+        this._refresh.set(res.refresh_token);
+        localStorage.setItem('auth_token', res.token);
+        localStorage.setItem('refresh_token', res.refresh_token);
       }));
   }
 } 
