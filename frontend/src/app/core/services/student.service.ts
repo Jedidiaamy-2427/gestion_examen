@@ -8,15 +8,15 @@ import { tap } from 'rxjs';
 })
 export class StudentService {
   private apiUrl = `${environment.apiUrl}/students`
-  private _students = signal<[]>([])
+  private _students = signal<any[]>([])
   students = this._students.asReadonly();
 
   constructor(private http: HttpClient) { }
 
   getAll() {
-      return this.http.get<[]>(this.apiUrl).pipe(
+      return this.http.get<any>(this.apiUrl).pipe(
         tap(res => {
-          this._students.set(res);
+          this._students.set(res.member);
         })     
       );  
   }

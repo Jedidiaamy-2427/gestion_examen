@@ -2,7 +2,10 @@
   <!-- Header -->
   <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
     <h2 class="text-xl font-bold">Mes examens</h2>
-    <button class="mt-4 sm:mt-0 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow">
+    <button class="mt-4 sm:mt-0 bg-red-500 hover:bg-red-600 flex items-center justify-center text-white px-4 py-2 rounded-lg shadow cursor-pointer"
+            (click)="openModal()">
+
+      <img src="/assets/icon/plan.svg" alt="Date" class="h-5 w-5 mr-2" />
       Organiser un examen
     </button>
   </div>
@@ -20,6 +23,7 @@
           <th class="p-3 font-medium">Date</th>
           <th class="p-3 font-medium">Heure</th>
           <th class="p-3 font-medium">Statut</th>
+          <th class="p-3 font-medium"> Action</th>
         </tr>
       </thead>
       <tbody>
@@ -29,7 +33,7 @@
           <td class="p-3 text-gray-800">
             <div class="flex items-center gap-2">
               <img src="/assets/icon/user.svg" alt="User" class="h-4 w-4 text-gray-500" />
-              <span>{{ exam.student }}</span>
+              <span>{{ exam.studentName }}</span>
             </div>
           </td>
 
@@ -61,13 +65,13 @@
           <td class="p-3 flex justify-between">
             <div
               [ngClass]="{
-                'bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs inline-flex items-center gap-1': exam.status === 'Confirmé',
-                'bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm inline-flex items-center gap-1': exam.status === 'À organiser',
-                'bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm inline-flex items-center gap-1': exam.status === 'Annulé',
-                'bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm inline-flex items-center gap-1': exam.status === 'En recherche de place'
+                'bg-green-100 text-green-600 px-3 py-1 rounded-full inline-flex items-center gap-1': exam.status === 'Confirmé',
+                'bg-orange-100 text-orange-600 px-3 py-1 rounded-full inline-flex items-center gap-1': exam.status === 'À organiser',
+                'bg-red-100 text-red-600 px-3 py-1 rounded-full  inline-flex items-center gap-1': exam.status === 'Annulé',
+                'bg-gray-100 text-gray-600 px-3 py-1 rounded-full inline-flex items-center gap-1': exam.status === 'En recherche de place'
               }"
 
-              class="flex items-center gap-2 p-2 rounded-2xl"
+              class="flex items-center gap-2 p-2 rounded-2xl text-xs"
             >
               <img *ngIf="exam.status === 'Confirmé'" src="/assets/icon/check.svg" alt="" class="h-4 w-4" />
               <img *ngIf="exam.status === 'À organiser'" src="/assets/icon/checklist2.svg" alt="" class="h-4 w-4" />
@@ -76,9 +80,108 @@
               <span class="flex">{{ exam.status }}</span>
             </div>
           </td>
+          <td class="p-3">
+              <div>
+                <button (click)="editExam(exam)" class="hover:text-blue-600 bg-sky-600 rounded m-1 cursor-pointer" title="Modifier">
+                <img src="/assets/icon/Edit.svg" alt="Modifier" class="h-4 w-4 m-1 inline" />
+              </button>
+              <button (click)="deleteExam(exam.id)" class="hover:text-red-600 bg-red-600 rounded m-1 cursor-pointer" title="Supprimer" >
+                <img src="/assets/icon/Delete.svg" alt="Supprimer" class="h-4 w-4 m-1 inline" />
+              </button>
+              </div>
+          </td>
         </tr>
 
       </tbody>
     </table>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-0 z-50">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-6">
+    <div class="flex justify-between items-center border-b border-gray-300 pb-3">
+      <h2 class="text-lg font-semibold">Nouvel examen</h2>
+      <button (click)="closeModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">✕</button>
+    </div>
+
+    <!-- Formulaire -->
+    <form [formGroup]="examForm" (ngSubmit)="submitExam()" class="space-y-4 mt-4">
+      
+      <!-- Select étudiant -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Étudiant</label>
+        <input *ngIf="isEditing" type="text"  class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200" 
+                formControlName="studentName"
+        />
+        <select *ngIf="!isEditing"
+          formControlName="student" 
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
+        >
+          <option value="">-- Sélectionner un étudiant --</option>
+          <option *ngFor="let s of studentService.students()" [value]="'/api/students/' + s.id">
+            {{ s.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Location -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Salle</label>
+        <input 
+          formControlName="location" 
+          type="text" 
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
+          placeholder="Salle A / Salle B"
+        />
+      </div>
+
+      <!-- Date -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+        <input 
+          formControlName="date" 
+          type="date" 
+          [min]="today"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
+        />
+      </div>
+
+      <!-- Time -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Heure</label>
+        <input 
+          formControlName="time" 
+          type="time" 
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
+        />
+      </div>
+
+      <!-- Status -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+        <select 
+          formControlName="status" 
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
+        >
+          <option value="Confirmé">Confirmé</option>
+          <option value="À organiser">À organiser</option>
+          <option value="En recherche de place">En recherche de place</option>
+        </select>
+      </div>
+
+      <!-- Boutons -->
+      <div class="flex justify-end space-x-3 pt-4">
+        <button type="button" (click)="closeModal()" 
+          class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 cursor-pointer">
+          Annuler
+        </button>
+        <button type="submit" 
+            class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 cursor-pointer">
+            {{ isEditing ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+      </div>
+    </form>
   </div>
 </div>
