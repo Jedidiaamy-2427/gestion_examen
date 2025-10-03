@@ -7,6 +7,9 @@ services:
             $jwtManager: '@lexik_jwt_authentication.jwt_manager'
             $refreshTokenManager: '@gesdinet.jwtrefreshtoken.refresh_token_manager'
             $security: '@security.helper'
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.

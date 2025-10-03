@@ -12,7 +12,7 @@ use ApiPlatform\OpenApi\Model\Operation as OpenApiOperation;
     shortName: 'Refresh Token',
     operations: [
         new Post(
-            uriTemplate: '/token/refresh',
+            uriTemplate: '/refresh_token',
             controller: RefreshTokenController::class,
             name: 'refresh_token',
             denormalizationContext: ['groups' => ['refresh']],

@@ -13,13 +13,13 @@ class RefreshTokenController extends AbstractController
 {
     public function __construct(private TokenService $tokenService) {}
 
-    #[Route('/api/token/refresh', name: 'api_token_refresh', methods: ['POST'])]
-    public function refresh(Request $request): JsonResponse
+    #[Route('/api/refresh_token', name: 'api_token_refresh', methods: ['POST'])]
+    public function __invoke(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $refreshToken = $data['refresh_token'] ?? null;
 
-        if (!$refreshToken) {   
+        if (!$refreshToken) {
             return new JsonResponse(['error' => 'Refresh token missing'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -29,8 +29,7 @@ class RefreshTokenController extends AbstractController
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_UNAUTHORIZED);
         }
 
-        return new JsonResponse([
-            'access_token' => $newAccessToken,
-        ]);
+        return new JsonResponse($newAccessToken);
     }
+
 }
