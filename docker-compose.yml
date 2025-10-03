@@ -37,11 +37,20 @@ services:
           openssl genrsa -out config/jwt/private.pem -aes256 -passout pass:$JWT_PASSPHRASE 4096 && \
           openssl rsa -pubout -in config/jwt/private.pem -passin pass:$JWT_PASSPHRASE -out config/jwt/public.pem; \
         fi && \
+        php bin/console doctrine:database:drop --force --if-exists && \
         php bin/console doctrine:database:create --if-not-exists && \
         php bin/console doctrine:migrations:migrate --no-interaction && \
         php bin/console doctrine:fixtures:load -n --append && \
         php -S 0.0.0.0:8000 -t public
       "
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
 volumes:
   pgdata:
   jwt_keys:
