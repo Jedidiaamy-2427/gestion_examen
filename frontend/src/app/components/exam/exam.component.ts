@@ -19,8 +19,7 @@ export class ExamComponent {
   isEditing = false;
   currentExamId: number | null = null;
 
-  constructor(protected ExamService: ExamService, 
-              private router: Router,
+  constructor(protected ExamService: ExamService,
               private fb: FormBuilder,
               protected studentService: StudentService){}
 
@@ -29,7 +28,6 @@ export class ExamComponent {
 
     this.studentService.getAll().subscribe();
 
-    // Formulaire
     this.examForm = this.fb.group({
       student: ['', Validators.required],
       studentName: [''],
