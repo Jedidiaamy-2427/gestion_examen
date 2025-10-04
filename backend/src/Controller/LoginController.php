@@ -28,12 +28,18 @@ class LoginController extends AbstractController
         $plainPassword = (string) ($payload['password'] ?? '');
 
         if ($email === '' || $plainPassword === '') {
-            return $this->json(['error' => 'Email and password are required'], Response::HTTP_BAD_REQUEST);
+            return $this->json([
+                'error' => 'Email et le mot de passe sont requis',
+                'status' => Response::HTTP_BAD_REQUEST
+            ], Response::HTTP_OK);
         }
 
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
         if ($user === null || !$passwordHasher->isPasswordValid($user, $plainPassword)) {
-            return $this->json(['error' => 'Invalid credentials'], Response::HTTP_NOT_FOUND);
+            return $this->json([
+                'error' => 'Email ou mot de passe invalides',
+                'status' => Response::HTTP_NOT_FOUND
+            ], Response::HTTP_OK);
         }
 
         $tokens = $this->tokenService->createTokens($user);
