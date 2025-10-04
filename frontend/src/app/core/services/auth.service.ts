@@ -3,6 +3,7 @@ import { tap } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { AuthResponse } from '../../shared/interfaces/auth-reponse.interface';
+import { ResponseError } from '../../shared/interfaces/Response.interface';
 
 
 
@@ -24,13 +25,15 @@ export class AuthService {
   }
 
     login(email: string, password: string) {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password })
+    return this.http.post<AuthResponse | ResponseError | any>(`${this.apiUrl}/login`, { email, password })
       .pipe(tap(res => {
-        this._token.set(res.token);
-        this._refresh.set(res.refresh_token);
-        localStorage.setItem('auth_token', res.token);
-        localStorage.setItem('refresh_token', res.refresh_token);
-        this.user.set({ username: res.username, email: res.email, token: res.token, refreshToken: res.refresh_token });
+          if ('token' in res) {
+            this._token.set(res.token);
+            this._refresh.set(res.refresh_token);
+            localStorage.setItem('auth_token', res.token);
+            localStorage.setItem('refresh_token', res.refresh_token);
+            this.user.set({ username: res.username, email: res.email, token: res.token, refreshToken: res.refresh_token });
+          }
       }));
     }
 
