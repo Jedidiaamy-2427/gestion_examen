@@ -69,7 +69,7 @@ class TokenService
         $accessToken = $this->jwtManager->create($user);
 
         return [
-            'access_token' => $accessToken,
+            'token' => $accessToken,
             'refresh_token' => $refreshTokenString
         ];
     }

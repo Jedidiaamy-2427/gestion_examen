@@ -5,7 +5,7 @@
   <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
     <div>
       <label class="block text-sm font-medium text-gray-700">Username</label>
-      <input formControlName="username" type="text" class="w-full border p-2 rounded" placeholder="Entrez le nom d'utilisateur" />
+      <input formControlName="username" type="text" class="w-full border border-gray-300 p-2 rounded" placeholder="Entrez le nom d'utilisateur" />
       <div *ngIf="form.get('username')?.invalid && form.get('username')?.touched" class="text-red-500 text-sm mt-1">
         Nom requis (min 3 caractères)
       </div>
@@ -13,7 +13,7 @@
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Email</label>
-      <input formControlName="email" type="email" class="w-full border p-2 rounded" placeholder="ex: vous@domaine.com" />
+      <input formControlName="email" type="email" class="w-full border border-gray-300 p-2 rounded" placeholder="ex: vous@domaine.com" />
       <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="text-red-500 text-sm mt-1">
         Email invalide
       </div>
@@ -21,7 +21,7 @@
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Mot de passe</label>
-      <input formControlName="password" type="password" class="w-full border p-2 rounded" placeholder="Mot de passe" />
+      <input formControlName="password" type="password" class="w-full border border-gray-300 p-2 rounded" placeholder="Mot de passe" />
       <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-red-500 text-sm mt-1">
         Mot de passe requis (min 6 caractères)
       </div>

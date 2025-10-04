@@ -8,8 +8,10 @@ export class AuthGuard implements CanActivate {
   auth = inject(AuthService);
   router = inject(Router);
 
+
   canActivate(): boolean {
-    if (!localStorage.getItem('auth_token')) {
+    if (!this.auth.token && this.auth.token == undefined) {
+      this.auth.logout()
       this.router.navigate(['/login']);
       return false; 
     }

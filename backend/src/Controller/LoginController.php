@@ -62,15 +62,21 @@ class LoginController extends AbstractController
         $refreshToken = $payload['refresh_token'] ?? null;
 
         if (!$refreshToken) {
-            return $this->json(['error' => 'Refresh token is required', 'status' => Response::HTTP_BAD_REQUEST], Response::HTTP_BAD_REQUEST);
+            return $this->json([
+                'error' => 'Refresh token is required', 
+                'status' => Response::HTTP_BAD_REQUEST
+            ], Response::HTTP_OK);
         }
 
         $token = $refreshTokenManager->get($refreshToken);
         if (!$token) {
-            return $this->json(['error' => 'Invalid refresh token', 'status' => Response::HTTP_NOT_FOUND], Response::HTTP_NOT_FOUND);
+            return $this->json([
+                'error' => 'Invalid refresh token', 
+                'status' => Response::HTTP_NOT_FOUND
+            ], Response::HTTP_OK);
         }
 
-        // Supprime le refresh token (invalidation)
+
         $refreshTokenManager->delete($token);
 
         return $this->json([

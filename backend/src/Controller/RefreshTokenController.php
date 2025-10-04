@@ -20,13 +20,19 @@ class RefreshTokenController extends AbstractController
         $refreshToken = $data['refresh_token'] ?? null;
 
         if (!$refreshToken) {
-            return new JsonResponse(['error' => 'Refresh token missing'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse([
+                'error' => 'Refresh token missing',
+                'status' => Response::HTTP_BAD_REQUEST
+            ], Response::HTTP_OK);
         }
 
         try {
             $newAccessToken = $this->tokenService->refreshAccessToken($refreshToken);
         } catch (\Exception $e) {
-            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_UNAUTHORIZED);
+            return new JsonResponse([
+                'error' => $e->getMessage(),
+                'status' => Response::HTTP_UNAUTHORIZED
+            ], Response::HTTP_OK);  
         }
 
         return new JsonResponse($newAccessToken);
