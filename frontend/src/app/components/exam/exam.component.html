@@ -11,7 +11,19 @@
   </div>
 
   <!-- Info -->
-  <p class="text-gray-500 mb-4">{{ ExamService.exams().length}} examens à venir</p>
+  <p class="text-gray-500 mb-4">{{ exams().length}} examens à venir</p>
+
+  <div *ngIf="loading()" class="flex justify-center items-center py-10">
+    <div class="flex flex-col items-center gap-3 text-gray-600">
+      <svg class="animate-spin h-6 w-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor"
+          d="M4 12a8 8 0 018-8v4l3.5-3.5L12 0v4a8 8 0 010 16v4l3.5-3.5L12 20v4a8 8 0 01-8-8z">
+        </path>
+      </svg>
+      <span>Chargement des examens...</span>
+    </div>
+  </div>
 
   <!-- Table responsive -->
   <div class="overflow-x-auto">
@@ -28,7 +40,7 @@
       </thead>
       <tbody>
 
-        <tr *ngFor="let exam of ExamService.exams()" class="rounded-2xl hover:bg-gray-50">
+        <tr *ngFor="let exam of exams()" class="rounded-2xl hover:bg-gray-50">
           <!-- Étudiant -->
           <td class="p-3 text-gray-800">
             <div class="flex items-center gap-2">
@@ -91,7 +103,7 @@
               </div>
           </td>
         </tr>
-        <tr *ngIf="ExamService.exams().length === 0">
+        <tr *ngIf="exams().length === 0">
             <td colspan="6" class="text-center py-4 text-gray-500">Aucune tâche disponible.</td>
         </tr>
 
@@ -102,11 +114,11 @@
 
 
 <!-- Modal -->
-<div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-0 z-50">
+<div *ngIf="showModal()" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-0 z-50">
   <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-6">
     <div class="flex justify-between items-center border-b border-gray-300 pb-3">
       <h2 class="text-lg font-semibold">
-         {{ isEditing ? 'Examen' : 'Nouvel examen' }}
+         {{ isEditing() ? 'Examen' : 'Nouvel examen' }}
       </h2>
       <button (click)="closeModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">✕</button>
     </div>
@@ -125,7 +137,7 @@
           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
         >
           <option value="">-- Sélectionner un étudiant --</option>
-          <option *ngFor="let s of studentService.students()" [value]="'/api/students/' + s.id">
+          <option *ngFor="let s of students()" [value]="'/api/students/' + s.id">
             {{ s.name }}
           </option>
         </select>
@@ -185,7 +197,7 @@
         </button>
         <button type="submit" 
             class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 cursor-pointer">
-            {{ isEditing ? 'Mettre à jour' : 'Enregistrer' }}
+            {{ isEditing() ? 'Mettre à jour' : 'Enregistrer' }}
         </button>
       </div>
     </form>

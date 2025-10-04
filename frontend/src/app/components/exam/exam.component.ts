@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ExamService } from '../../core/services/exam.service';
@@ -13,19 +13,36 @@ import { StudentService } from '../../core/services/student.service';
 })
 export class ExamComponent {
 
-  showModal = false;
+  
+  isEditing = signal(false);  
+  currentExamId = signal<number | any>(null);
+  selectedStudent = null;
+  showModal = signal(false);
+  loading = signal(true);
+
+  exams = computed(() => this.ExamService.exams())
+  students = computed(() =>  this.studentService.students())
+
   examForm!: FormGroup;
   today = new Date().toISOString().split('T')[0];
-  isEditing = false;
-  currentExamId: number | null = null;
 
   constructor(protected ExamService: ExamService,
               private fb: FormBuilder,
               protected studentService: StudentService){}
 
   ngOnInit() {
-    this.ExamService.getAll().subscribe()
+    this.loading.set(true);
 
+    this.ExamService.getAll().subscribe({
+      next: () => {
+        this.loading.set(false);
+      },
+      error: err => {
+        console.error('Erreur de chargement des examens:', err);
+        this.loading.set(false);
+      }
+    })
+    
     this.studentService.getAll().subscribe();
 
     this.examForm = this.fb.group({
@@ -39,8 +56,8 @@ export class ExamComponent {
   } 
 
   openModal() {
-    this.isEditing = false;
-    this.currentExamId = null;
+    this.isEditing.set(false);
+    this.currentExamId.set(null);
     this.examForm.reset({
       student: '',
       location: '',
@@ -48,12 +65,12 @@ export class ExamComponent {
       time: '',
       status: 'Confirmé'
     });
-    this.showModal = true;
+    this.showModal.set(true);
   }
 
    editExam(exam: any) {
-    this.isEditing = true;
-    this.currentExamId = exam.id;
+    this.isEditing.set(true);
+    this.currentExamId.set(exam.id);
     console.log('exam', exam)
     this.examForm.patchValue({
       student: exam.student,
@@ -64,20 +81,20 @@ export class ExamComponent {
       status: exam.status
     });
 
-    this.showModal = true;
+    this.showModal.set(true);
   }
 
   closeModal() {
-    this.showModal = false;
+    this.showModal.set(false);
   }
 
   submitExam() {
     if (this.examForm.valid) {
       const examData = this.examForm.value;
 
-      if (this.isEditing && this.currentExamId) {
+      if (this.isEditing() && this.currentExamId()) {
 
-        this.ExamService.updateExam(this.currentExamId, examData).subscribe({
+        this.ExamService.updateExam(this.currentExamId(), examData).subscribe({
           next: () => {
             this.closeModal();
             this.ExamService.getAll().subscribe();

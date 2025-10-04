@@ -3,35 +3,38 @@
 
   <!-- Grid responsive -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-    <!-- Card générique -->
+    <!-- Confirmé -->
     <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
       <div class="text-gray-500 text-sm">Confirmé</div>
       <div class="flex items-center justify-center mt-4 gap-3">
-        <span class="text-4xl md:text-5xl font-bold text-green-600">{{ stats.confirmed }}</span>
+        <span class="text-4xl md:text-5xl font-bold text-green-600">{{ stats().confirmed }}</span>
         <img src="/assets/icon/check.svg" alt="Confirmé" class="h-11 w-11 ml-4" />
       </div>
     </div>
 
+    <!-- À organiser -->
     <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
       <div class="text-gray-500 text-sm">À organiser</div>
       <div class="flex items-center justify-center mt-4 gap-3">
-        <span class="text-4xl md:text-5xl font-bold text-orange-400">{{ stats.toOrganize }}</span>
+        <span class="text-4xl md:text-5xl font-bold text-orange-400">{{ stats().toOrganize }}</span>
         <img src="/assets/icon/checklist2.svg" alt="À organiser" class="h-11 w-11 ml-4" />
       </div>
     </div>
 
+    <!-- Annulé -->
     <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
       <div class="text-gray-500 text-sm">Annulé</div>
       <div class="flex items-center justify-center mt-4 gap-3">
-        <span class="text-4xl md:text-5xl font-bold text-red-600">{{ stats.cancelled }}</span>
+        <span class="text-4xl md:text-5xl font-bold text-red-600">{{ stats().cancelled }}</span>
         <img src="/assets/icon/Cancel Icon.svg" alt="Annulé" class="h-11 w-11 ml-4" />
       </div>
     </div>
 
+    <!-- En recherche de place -->
     <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
       <div class="text-gray-500 text-sm">En recherche de place</div>
       <div class="flex items-center justify-center mt-4 gap-3">
-        <span class="text-4xl md:text-5xl font-bold text-blue-500">{{ stats.searching }}</span>
+        <span class="text-4xl md:text-5xl font-bold text-blue-500">{{ stats().searching }}</span>
         <img src="/assets/icon/Temps.svg" alt="Recherche" class="h-11 w-11 ml-4" />
       </div>
     </div>
