@@ -3,7 +3,7 @@
 
   <div class="overflow-x-auto">
     <table class="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
-      <thead class="bg-sky-700 text-white">
+      <thead class="bg-gray-500 text-white">
         <tr>
           <th class="px-6 py-3 text-left">ID</th>
           <th class="px-6 py-3 text-left">Nom</th>
@@ -33,17 +33,17 @@
     <button
       (click)="previousPage()"
       [disabled]="page === 1"
-      class="px-4 py-2 bg-sky-600 btn-sm cursor-pointer text-white rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-sky-800 transition-colors"
+      class="px-3 py-1 bg-sky-600 btn-sm cursor-pointer text-white rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-sky-800 transition-colors"
     >
-      ‹ Précédent
+      ‹
     </button>
-    <span class="text-gray-700">Page {{ page }} / {{ totalPages }}</span>
+    <span class="text-gray-700">{{ page }} / {{ totalPages }}</span>
     <button
       (click)="nextPage()"
       [disabled]="page === totalPages"
-      class="px-4 py-2 bg-sky-600  cursor-pointer rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-sky-800 transition-colors"
+      class="px-3 py-1 bg-sky-600  cursor-pointer rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-sky-800 transition-colors"
     >
-      Suivant ›
+     ›
     </button>
   </div>
 </div>
