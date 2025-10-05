@@ -129,10 +129,10 @@
       <!-- Select étudiant -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Étudiant</label>
-        <input *ngIf="isEditing" type="text"  class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200" 
+        <input *ngIf="isEditing()" type="text"  class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200" 
                 formControlName="studentName"
         />
-        <select *ngIf="!isEditing"
+        <select *ngIf="!isEditing()"
           formControlName="student" 
           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
         >
