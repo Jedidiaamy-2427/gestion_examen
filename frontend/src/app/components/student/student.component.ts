@@ -23,7 +23,6 @@ constructor(private http: HttpClient,  private studentService: StudentService) {
   ngOnInit(): void {
     this.studentService.getAll().subscribe({
       next: (students) => {
-
         const data = students.member;
         
         this.students = data.sort((a:any, b:any) => {
@@ -32,25 +31,27 @@ constructor(private http: HttpClient,  private studentService: StudentService) {
           return 0; // conserver l'ordre relatif sinon
         });
 
-        this.totalPages = Math.ceil(this.students.length / this.pageSize);
-        // Réinitialiser la page si besoin
-        if (this.page > this.totalPages) {
-          this.page = this.totalPages || 1; // au moins 1 page
-        }
+        this.resetPagination()
       }
     });
   }
 
+  resetPagination() {
+    this.totalPages = Math.ceil(this.students.length / this.pageSize);
 
-get paginatedStudents(): Student[] {
-  const students = this.students;
+    if (this.page > this.totalPages) {
+      this.page = this.totalPages || 1; // au moins 1 page
+    }
+  }
 
-  if (!students || students.length === 0) return [];
-  const start = (this.page - 1) * this.pageSize;
-  const end = start + this.pageSize;
-  return students.slice(start, end);
-}
+  get paginatedStudents(): Student[] {
+    const students = this.students;
 
+    if (!students || students.length === 0) return [];
+    const start = (this.page - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return students.slice(start, end);
+  }
 
   previousPage(): void {
     if (this.page > 1) this.page--;

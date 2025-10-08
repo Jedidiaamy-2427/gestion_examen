@@ -1,7 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { Student, StudentResponseObject } from '../../shared/interfaces/student.interface';
+import { ResponseObjectData } from '../../shared/interfaces/Response.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -13,16 +15,16 @@ export class StudentService {
 
   constructor(private http: HttpClient) { }
 
-  getAll() {
-      return this.http.get<any>(this.apiUrl).pipe(
+  getAll():Observable<ResponseObjectData> {
+      return this.http.get<ResponseObjectData>(this.apiUrl).pipe(
         tap(res => {
           this._students.set(res.member);
         })     
-      );  
+      );
   }
 
-  getById(id:number) {
-    return this.http.get<[]>(`${this.apiUrl}/${id}`).subscribe();
+  getById(id:number): Observable<StudentResponseObject> {
+    return this.http.get<StudentResponseObject>(`${this.apiUrl}/${id}`);
   }
 
 }

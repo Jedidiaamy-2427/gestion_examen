@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { AuthResponse } from '../../shared/interfaces/auth-reponse.interface';
@@ -24,7 +24,7 @@ export class AuthService {
     if (refresh) this._refresh.set(refresh);
   }
 
-    login(email: string, password: string) {
+    login(email: string, password: string): Observable<AuthResponse | ResponseError | any> {
     return this.http.post<AuthResponse | ResponseError | any>(`${this.apiUrl}/login`, { email, password })
       .pipe(tap(res => {
           if ('token' in res) {
@@ -37,7 +37,7 @@ export class AuthService {
       }));
     }
 
-    register(username: string, email: string, password: string) {
+    register(username: string, email: string, password: string): Observable<AuthResponse> {
       return this.http.post<AuthResponse>(`${this.apiUrl}/register`, { username, email, password })
           .pipe(tap(res => {
             this.user.set({ username: res.username, email: res.email, token: res.token, refreshToken: res.refresh_token });

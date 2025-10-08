@@ -12,14 +12,12 @@ import { StudentService } from '../../core/services/student.service';
   styleUrl: './exam.component.css'
 })
 export class ExamComponent {
-
   
   isEditing = signal(false);  
   currentExamId = signal<number | any>(null);
-  selectedStudent = null;
   showModal = signal(false);
   loading = signal(true);
-
+  
   exams = computed(() => this.ExamService.exams())
   students = computed(() =>  this.studentService.students())
 
@@ -33,6 +31,14 @@ export class ExamComponent {
   ngOnInit() {
     this.loading.set(true);
 
+    this.studentService.getAll().subscribe();
+
+    this.setForm();
+
+    this.loadAllExams();
+  } 
+
+  loadAllExams() {
     this.ExamService.getAll().subscribe({
       next: () => {
         this.loading.set(false);
@@ -42,9 +48,9 @@ export class ExamComponent {
         this.loading.set(false);
       }
     })
-    
-    this.studentService.getAll().subscribe();
+  }
 
+  setForm() {
     this.examForm = this.fb.group({
       student: ['', Validators.required],
       studentName: [''],
@@ -53,11 +59,12 @@ export class ExamComponent {
       time: ['', Validators.required],
       status: ['Confirmé', Validators.required],
     });
-  } 
+  }
 
-  openModal() {
+  openModalNewExam() {
     this.isEditing.set(false);
     this.currentExamId.set(null);
+
     this.examForm.reset({
       student: '',
       location: '',
@@ -68,10 +75,10 @@ export class ExamComponent {
     this.showModal.set(true);
   }
 
-   editExam(exam: any) {
+   openModalEditExam(exam: any) {
     this.isEditing.set(true);
     this.currentExamId.set(exam.id);
-    console.log('exam', exam)
+
     this.examForm.patchValue({
       student: exam.student,
       studentName: exam.studentName,
@@ -80,7 +87,6 @@ export class ExamComponent {
       time: exam.time.split('T')[1]?.substring(0,5) || '', 
       status: exam.status
     });
-
     this.showModal.set(true);
   }
 
@@ -97,7 +103,7 @@ export class ExamComponent {
         this.ExamService.updateExam(this.currentExamId(), examData).subscribe({
           next: () => {
             this.closeModal();
-            this.ExamService.getAll().subscribe();
+            this.loadAllExams();
           },
           error: err => console.error("Erreur mise à jour examen", err)
         });
@@ -106,7 +112,7 @@ export class ExamComponent {
         this.ExamService.addExam(examData).subscribe({
           next: () => {
             this.closeModal();
-            this.ExamService.getAll().subscribe(); 
+            this.loadAllExams(); 
           },
           error: err => console.error("Erreur création examen", err)
         });
@@ -114,12 +120,14 @@ export class ExamComponent {
     }
   }
 
-    deleteExam(id: number) {
+  deleteExam(id: number) {
     if (confirm("Voulez-vous vraiment supprimer cet examen ?")) {
+
       this.ExamService.removeExam(id).subscribe({
-        next: () => this.ExamService.getAll().subscribe(),
+        next: () => this.loadAllExams(),
         error: err => console.error("Erreur suppression examen", err)
       });
+
     }
   }
 } 

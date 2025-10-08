@@ -6,3 +6,13 @@ export interface ExamInterface {
     time: Date;
     status: string;
 }
+
+export interface ExamPostInterface {
+    student: string;
+    location: string;
+    date: Date;
+    time: Date;
+    status: string;
+}
+
+
